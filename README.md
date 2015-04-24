@@ -4,8 +4,6 @@ sample-goutte
 Try Goutte
 
 ```sh
-$ gem install itamae
-$ vagrant up
-$ cd ./www
 $ composer install
+$ php -S localhost:8000
 ```
