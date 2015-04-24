@@ -3,17 +3,19 @@ date_default_timezone_set('Asia/Tokyo');
 
 require_once('./vendor/autoload.php');
 
-function debug($arg)
-{
-    echo '<pre>';
-    var_dump($arg);
-    echo '</pre>';
-}
+/**
+ *  Export to browser's js console
+ */
+echo 'Export to browser\'s js console';
+$logger = new Monolog\Logger('try-goutte');
+$logger->pushHandler(new Monolog\Handler\BrowserConsoleHandler());
 
-try {
-    $client = new Goutte\Client();
-    $crawler = $client->request('GET', 'http://www.google.com');
+/** @var string */
+$target = 'https://github.com/trending';
 
-} catch (Exception $e) {
-    echo $e->getMessage();
-}
+$client = new Goutte\Client();
+$crawler = $client->request('GET', $target);
+
+$crawler->filter('ol.repo-list > li.repo-list-item > h3.repo-list-name > a')->each(function ($node) use ($logger) {
+  $logger->addDebug(str_replace(["\n", ' '], '', $node->text()));
+});
